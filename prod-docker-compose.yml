@@ -1,0 +1,41 @@
+version: "3"
+services:
+  linkfar-externel-redis:
+    container_name: linkfar-externel-redis
+    image: redis:5.0.5
+    ports:
+      - "6379:6379"
+
+  linkfar-internel-redis:
+    container_name: linkfar-internel-redis
+    image: redis:5.0.5
+    ports:
+      - "6378:6379"
+
+  linkfar-mongo:
+    container_name: linkfar-mongo
+    image: mongo:3.6.12
+    volumes:
+      - "./mongo/data:/data/db:rw"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: linkfar-mongo
+
+  linkfar-ap:
+    build: .
+    image: linkfar-ap:0.0.1
+    ports:
+      - 80:80
